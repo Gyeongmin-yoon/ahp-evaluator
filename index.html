@@ -217,9 +217,26 @@
     background: #cbd5e1;
     cursor: not-allowed;
   }
+  /* 미완료 상태 — 클릭은 가능하지만 시각적으로 회색 */
+  .nav-bar .btn-next.incomplete,
+  .nav-bar .btn-submit.incomplete {
+    background: #cbd5e1;
+    color: #64748b;
+  }
   .nav-bar .btn-submit {
     background: #16a34a;
     color: #fff;
+  }
+
+  /* 미응답 카드 강조 (스크롤 이동 후 깜빡임) */
+  .compare-card.highlight-missing {
+    border-color: #ef4444;
+    box-shadow: 0 0 0 3px rgba(239,68,68,0.25);
+    animation: pulse-missing 0.5s ease-in-out 3;
+  }
+  @keyframes pulse-missing {
+    0%, 100% { transform: scale(1); }
+    50%      { transform: scale(1.015); }
   }
 
   /* 완료 화면 */
@@ -625,9 +642,29 @@ function updateNextButton() {
   if (state.currentScreen !== "eval") return;
   const complete = isPageComplete();
   const isLast = state.currentPageIdx === PAGES.length - 1;
-  $btnNext.disabled = !complete;
+  $btnNext.disabled = false;  // 항상 클릭 가능 — 미완료 시 누락 문항으로 이동
   $btnNext.textContent = isLast ? "제출하기" : "다음";
-  $btnNext.className = isLast ? "btn-submit" : "btn-next";
+  // 미완료면 .incomplete 클래스로 시각적 회색 표시
+  $btnNext.className = (isLast ? "btn-submit" : "btn-next") + (complete ? "" : " incomplete");
+}
+
+// 첫 번째 미응답 카드로 스크롤 + 강조 효과
+function scrollToFirstUnanswered() {
+  const $pairs = document.getElementById("eval-pairs");
+  const containers = $pairs.querySelectorAll(".scale-container");
+  for (const sc of containers) {
+    if (!sc.querySelector(".scale-btn.selected")) {
+      const card = sc.closest(".compare-card");
+      card.scrollIntoView({ behavior: "smooth", block: "center" });
+      // 강조 클래스 제거 후 다시 추가하여 애니메이션 재실행
+      card.classList.remove("highlight-missing");
+      void card.offsetWidth;  // reflow 강제 (애니메이션 재시작 트릭)
+      card.classList.add("highlight-missing");
+      setTimeout(() => card.classList.remove("highlight-missing"), 2000);
+      return true;
+    }
+  }
+  return false;
 }
 
 function showScreen(name) {
@@ -785,7 +822,8 @@ $btnNext.addEventListener("click", () => {
     showScreen("eval");
   } else if (state.currentScreen === "eval") {
     if (!isPageComplete()) {
-      alert("아직 응답하지 않은 항목이 있습니다.");
+      // 미응답 항목이 있으면 그 위치로 스크롤·강조
+      scrollToFirstUnanswered();
       return;
     }
     if (state.currentPageIdx === PAGES.length - 1) {
