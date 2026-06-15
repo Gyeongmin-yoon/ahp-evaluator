@@ -163,13 +163,32 @@
     appearance: none;
   }
   .scale-btn:active { transform: scale(0.95); }
+  /* 색상 그라데이션 — 왼쪽(파랑) 8단계 + 오른쪽(빨강) 8단계 */
+  /* 표시 9(끝) = 가장 진함, 표시 2(가운데 옆) = 가장 옅음 */
+  .scale-btn.lvl-l8 { background: #3b82f6;                  color: #fff;     border-color: #2563eb; }
+  .scale-btn.lvl-l7 { background: rgba(59,130,246,0.85);    color: #fff;     border-color: rgba(59,130,246,0.6); }
+  .scale-btn.lvl-l6 { background: rgba(59,130,246,0.70);    color: #fff;     border-color: rgba(59,130,246,0.5); }
+  .scale-btn.lvl-l5 { background: rgba(59,130,246,0.55);    color: #fff;     border-color: rgba(59,130,246,0.4); }
+  .scale-btn.lvl-l4 { background: rgba(59,130,246,0.40);    color: #1e3a8a;  border-color: rgba(59,130,246,0.3); }
+  .scale-btn.lvl-l3 { background: rgba(59,130,246,0.28);    color: #1e3a8a;  border-color: rgba(59,130,246,0.25); }
+  .scale-btn.lvl-l2 { background: rgba(59,130,246,0.18);    color: #1e3a8a;  border-color: rgba(59,130,246,0.2); }
+  .scale-btn.lvl-l1 { background: rgba(59,130,246,0.10);    color: #1e3a8a;  border-color: rgba(59,130,246,0.15); }
+  .scale-btn.lvl-r1 { background: rgba(239,68,68,0.10);     color: #7f1d1d;  border-color: rgba(239,68,68,0.15); }
+  .scale-btn.lvl-r2 { background: rgba(239,68,68,0.18);     color: #7f1d1d;  border-color: rgba(239,68,68,0.2); }
+  .scale-btn.lvl-r3 { background: rgba(239,68,68,0.28);     color: #7f1d1d;  border-color: rgba(239,68,68,0.25); }
+  .scale-btn.lvl-r4 { background: rgba(239,68,68,0.40);     color: #7f1d1d;  border-color: rgba(239,68,68,0.3); }
+  .scale-btn.lvl-r5 { background: rgba(239,68,68,0.55);     color: #fff;     border-color: rgba(239,68,68,0.4); }
+  .scale-btn.lvl-r6 { background: rgba(239,68,68,0.70);     color: #fff;     border-color: rgba(239,68,68,0.5); }
+  .scale-btn.lvl-r7 { background: rgba(239,68,68,0.85);     color: #fff;     border-color: rgba(239,68,68,0.6); }
+  .scale-btn.lvl-r8 { background: #ef4444;                  color: #fff;     border-color: #dc2626; }
+  /* 선택 상태 — lvl 색상보다 우선되도록 specificity 동일 + 후속 정의 */
   .scale-btn.selected {
     background: #525c68;
     color: #fff;
     border-color: #525c68;
     box-shadow: 0 2px 4px rgba(0,0,0,0.15);
   }
-  .scale-btn.equal { background: #fef3c7; border-color: #fbbf24; }
+  .scale-btn.equal { background: #fef3c7; border-color: #fbbf24; color: #92400e; }
   .scale-btn.equal.selected { background: #f59e0b; color: #fff; border-color: #f59e0b; }
   .scale-legend {
     display: flex;
@@ -594,9 +613,9 @@ function renderEvalPage() {
         <div class="rhs">${labelR}</div>
       </div>
       <div class="scale-container" data-i="${i}" data-j="${j}">
-        ${[1,2,3,4,5,6,7,8].map(v => `<button class="scale-btn ${selectedVal===v?'selected':''}" data-val="${v}">${10-v}</button>`).join("")}
+        ${[1,2,3,4,5,6,7,8].map(v => `<button class="scale-btn lvl-l${9-v} ${selectedVal===v?'selected':''}" data-val="${v}">${10-v}</button>`).join("")}
         <button class="scale-btn equal ${selectedVal===9?'selected':''}" data-val="9">=</button>
-        ${[10,11,12,13,14,15,16,17].map(v => `<button class="scale-btn ${selectedVal===v?'selected':''}" data-val="${v}">${v-8}</button>`).join("")}
+        ${[10,11,12,13,14,15,16,17].map(v => `<button class="scale-btn lvl-r${v-9} ${selectedVal===v?'selected':''}" data-val="${v}">${v-8}</button>`).join("")}
       </div>
       <div class="scale-legend">
         <span>← ${labelL} 우세</span>
